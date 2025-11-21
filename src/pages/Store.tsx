@@ -83,7 +83,7 @@ const Store = () => {
           {{
             featured: (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {mockItems.map((item) => (
+                {mockItems.sort((a, b) => (b.attestationScore || 0) - (a.attestationScore || 0)).slice(0, 8).map((item) => (
                   <ItemCard key={item.id} {...item} />
                 ))}
               </div>
