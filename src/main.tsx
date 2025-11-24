@@ -1,5 +1,9 @@
-import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
-import "./index.css";
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
+import { logEnvironmentStatus } from './lib/env';
 
-createRoot(document.getElementById("root")!).render(<App />);
+// Check environment configuration on startup
+logEnvironmentStatus();
+
+createRoot(document.getElementById('root')!).render(<App />);

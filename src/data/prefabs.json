@@ -1,0 +1,303 @@
+{
+    "weapons": [
+        {
+            "id": "AR_01",
+            "name": "Assault Rifle Mk1",
+            "baseStats": {
+                "damage": 25,
+                "fireRate": 8,
+                "range": 50,
+                "accuracy": 75
+            }
+        },
+        {
+            "id": "AR_02",
+            "name": "Assault Rifle Mk2",
+            "baseStats": {
+                "damage": 28,
+                "fireRate": 7,
+                "range": 55,
+                "accuracy": 80
+            }
+        },
+        {
+            "id": "SMG_01",
+            "name": "Submachine Gun Alpha",
+            "baseStats": {
+                "damage": 18,
+                "fireRate": 12,
+                "range": 30,
+                "accuracy": 65
+            }
+        },
+        {
+            "id": "SMG_02",
+            "name": "Submachine Gun Beta",
+            "baseStats": {
+                "damage": 20,
+                "fireRate": 11,
+                "range": 32,
+                "accuracy": 70
+            }
+        },
+        {
+            "id": "SNIPER_01",
+            "name": "Sniper Rifle Precision",
+            "baseStats": {
+                "damage": 85,
+                "fireRate": 1,
+                "range": 150,
+                "accuracy": 95
+            }
+        },
+        {
+            "id": "SNIPER_02",
+            "name": "Sniper Rifle Elite",
+            "baseStats": {
+                "damage": 90,
+                "fireRate": 1,
+                "range": 180,
+                "accuracy": 98
+            }
+        },
+        {
+            "id": "SHOTGUN_01",
+            "name": "Shotgun Standard",
+            "baseStats": {
+                "damage": 60,
+                "fireRate": 2,
+                "range": 15,
+                "accuracy": 50
+            }
+        },
+        {
+            "id": "PISTOL_01",
+            "name": "Pistol Basic",
+            "baseStats": {
+                "damage": 22,
+                "fireRate": 6,
+                "range": 25,
+                "accuracy": 70
+            }
+        }
+    ],
+    "skins": [
+        {
+            "id": "SKIN_URBAN",
+            "name": "Urban Tactical",
+            "description": "Modern city warfare aesthetic"
+        },
+        {
+            "id": "SKIN_DESERT",
+            "name": "Desert Storm",
+            "description": "Sand-weathered combat gear"
+        },
+        {
+            "id": "SKIN_SHADOW",
+            "name": "Shadow Ops",
+            "description": "Stealth operations black"
+        },
+        {
+            "id": "SKIN_NEON",
+            "name": "Neon Punk",
+            "description": "Cyberpunk glowing aesthetic"
+        },
+        {
+            "id": "SKIN_ARCTIC",
+            "name": "Arctic Warfare",
+            "description": "Ice-cold winter camo"
+        },
+        {
+            "id": "SKIN_DIGITAL",
+            "name": "Digital Camo",
+            "description": "Pixelated modern pattern"
+        }
+    ],
+    "powerups": [
+        {
+            "id": "SPEED_01",
+            "name": "Speed Boost",
+            "baseDuration": 10,
+            "effect": "Increases movement speed by 50%"
+        },
+        {
+            "id": "SPEED_02",
+            "name": "Sprint Surge",
+            "baseDuration": 8,
+            "effect": "Increases movement speed by 75%"
+        },
+        {
+            "id": "SHIELD_01",
+            "name": "Energy Shield",
+            "baseDuration": 15,
+            "effect": "Absorbs 100 damage"
+        },
+        {
+            "id": "SHIELD_02",
+            "name": "Force Barrier",
+            "baseDuration": 12,
+            "effect": "Absorbs 150 damage"
+        },
+        {
+            "id": "DAMAGE_01",
+            "name": "Damage Amplifier",
+            "baseDuration": 10,
+            "effect": "Increases damage by 30%"
+        },
+        {
+            "id": "DAMAGE_02",
+            "name": "Critical Surge",
+            "baseDuration": 8,
+            "effect": "Increases damage by 50%"
+        },
+        {
+            "id": "HEALTH_01",
+            "name": "Health Pack",
+            "baseDuration": 0,
+            "effect": "Instantly restores 50 HP"
+        },
+        {
+            "id": "AMMO_01",
+            "name": "Ammo Cache",
+            "baseDuration": 0,
+            "effect": "Restores full ammunition"
+        }
+    ],
+    "emotes": [
+        {
+            "id": "EMOTE_VICTORY",
+            "name": "Victory Pose",
+            "duration": 3
+        },
+        {
+            "id": "EMOTE_TAUNT",
+            "name": "Taunt",
+            "duration": 2
+        },
+        {
+            "id": "EMOTE_DANCE",
+            "name": "Dance Move",
+            "duration": 5
+        },
+        {
+            "id": "EMOTE_SALUTE",
+            "name": "Salute",
+            "duration": 2
+        },
+        {
+            "id": "EMOTE_LAUGH",
+            "name": "Laugh",
+            "duration": 3
+        }
+    ],
+    "visualVariations": {
+        "colorStyles": [
+            {
+                "id": "neon_purple",
+                "name": "Neon Purple",
+                "hex": "#9D4EDD"
+            },
+            {
+                "id": "neon_blue",
+                "name": "Neon Blue",
+                "hex": "#3A86FF"
+            },
+            {
+                "id": "neon_green",
+                "name": "Neon Green",
+                "hex": "#06FFA5"
+            },
+            {
+                "id": "desert_yellow",
+                "name": "Desert Yellow",
+                "hex": "#F4A261"
+            },
+            {
+                "id": "shadow_black",
+                "name": "Shadow Black",
+                "hex": "#2B2D42"
+            },
+            {
+                "id": "arctic_white",
+                "name": "Arctic White",
+                "hex": "#EDF2F4"
+            },
+            {
+                "id": "blood_red",
+                "name": "Blood Red",
+                "hex": "#D00000"
+            },
+            {
+                "id": "toxic_green",
+                "name": "Toxic Green",
+                "hex": "#52B788"
+            }
+        ],
+        "textureVariants": [
+            {
+                "id": "variant_a",
+                "name": "Standard Finish"
+            },
+            {
+                "id": "variant_b",
+                "name": "Worn Battle"
+            },
+            {
+                "id": "variant_c",
+                "name": "Pristine Clean"
+            },
+            {
+                "id": "variant_d",
+                "name": "Digital Pattern"
+            }
+        ],
+        "glowEffects": [
+            {
+                "id": "none",
+                "name": "No Glow"
+            },
+            {
+                "id": "low",
+                "name": "Subtle Glow"
+            },
+            {
+                "id": "medium",
+                "name": "Standard Glow"
+            },
+            {
+                "id": "high",
+                "name": "Intense Glow"
+            }
+        ]
+    },
+    "statLimits": {
+        "weapon": {
+            "damage": {
+                "min": -5,
+                "max": 5
+            },
+            "fireRate": {
+                "min": -2,
+                "max": 2
+            },
+            "range": {
+                "min": -3,
+                "max": 3
+            },
+            "accuracy": {
+                "min": -5,
+                "max": 5
+            }
+        },
+        "powerup": {
+            "duration": {
+                "min": 5,
+                "max": 30
+            },
+            "effectStrength": {
+                "min": -10,
+                "max": 10
+            }
+        }
+    }
+}

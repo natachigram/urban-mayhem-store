@@ -1,123 +1,218 @@
-import { Header } from "@/components/Header";
-import { HeroSection } from "@/components/store/HeroSection";
-import { StoreTabs } from "@/components/store/StoreTabs";
-import { ItemCard, ItemCardProps } from "@/components/store/ItemCard";
-
-// Mock data - will be replaced with real data from Supabase + Intuition
-const mockItems: ItemCardProps[] = [
-  {
-    id: "1",
-    name: "Plasma Rifle X",
-    type: "Weapon",
-    imageUrl: "https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=800&h=800&fit=crop",
-    price: 29.99,
-    rarity: "legendary",
-    attestationScore: 95,
-    creator: { name: "ArmsDealer" }
-  },
-  {
-    id: "2",
-    name: "Neon Tactical Suit",
-    type: "Skin",
-    imageUrl: "https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?w=800&h=800&fit=crop",
-    price: 19.99,
-    rarity: "epic",
-    attestationScore: 88,
-    creator: { name: "StyleCraft" }
-  },
-  {
-    id: "3",
-    name: "Speed Boost Pack",
-    type: "Power-up",
-    imageUrl: "https://images.unsplash.com/photo-1614680376408-81e91ffe3db7?w=800&h=800&fit=crop",
-    price: 9.99,
-    rarity: "rare",
-    attestationScore: 92,
-    creator: { name: "PowerLab" }
-  },
-  {
-    id: "4",
-    name: "Combat Bundle Pro",
-    type: "Bundle",
-    imageUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&h=800&fit=crop",
-    price: 49.99,
-    rarity: "legendary",
-    attestationScore: 97,
-    creator: { name: "ProGear" }
-  },
-  {
-    id: "5",
-    name: "Sniper Elite Rifle",
-    type: "Weapon",
-    imageUrl: "https://images.unsplash.com/photo-1595433562696-a8650ceb3c00?w=800&h=800&fit=crop",
-    price: 24.99,
-    rarity: "epic",
-    attestationScore: 89,
-    creator: { name: "ArmsDealer" }
-  },
-  {
-    id: "6",
-    name: "Urban Camo Set",
-    type: "Skin",
-    imageUrl: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=800&h=800&fit=crop",
-    price: 14.99,
-    rarity: "rare",
-    attestationScore: 85,
-    creator: { name: "StyleCraft" }
-  },
-];
+import { Header } from '@/components/Header';
+import { HeroSection } from '@/components/store/HeroSection';
+import { UMPSection } from '@/components/store/UMPSection';
+import { SkinsSection } from '@/components/store/SkinsSection';
+import {
+  Lock,
+  Shield,
+  Swords,
+  Gem,
+  Cuboid,
+  Code2,
+  Cpu,
+  Network,
+  ChevronRight,
+} from 'lucide-react';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 const Store = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className='min-h-screen bg-background text-foreground selection:bg-primary/30'>
       <Header />
-      
-      <main className="container py-8">
-        {/* Hero Section */}
-        <div className="mb-12">
-          <HeroSection />
-        </div>
 
-        {/* Store Tabs */}
-        <StoreTabs>
-          {{
-            featured: (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {mockItems.sort((a, b) => (b.attestationScore || 0) - (a.attestationScore || 0)).slice(0, 8).map((item) => (
-                  <ItemCard key={item.id} {...item} />
-                ))}
+      <main className='space-y-24 pb-24'>
+        {/* Hero Section */}
+        <HeroSection />
+
+        <div className='container space-y-24'>
+          {/* Buy UMP Section */}
+          <UMPSection />
+
+          {/* Character Skins Shop */}
+          <SkinsSection />
+
+          {/* Coming Soon Section */}
+          <section className='pt-12 border-t border-border/30'>
+            <div className='flex items-center gap-3 mb-8'>
+              <Lock className='h-5 w-5 text-muted-foreground' />
+              <h2 className='text-xl font-bold uppercase tracking-widest text-muted-foreground'>
+                System Expansion (Coming Soon)
+              </h2>
+            </div>
+
+            <div className='space-y-8'>
+              <div className='grid grid-cols-1 md:grid-cols-3 gap-6 opacity-60 hover:opacity-100 transition-opacity duration-500'>
+                <Card className='bg-secondary/10 border-border/30'>
+                  <CardHeader>
+                    <CardTitle className='flex items-center gap-2 uppercase tracking-wider text-base text-muted-foreground'>
+                      <Shield className='h-4 w-4 text-blue-400' />
+                      Reputation Identity
+                    </CardTitle>
+                    <CardDescription className='text-xs'>
+                      On-chain player profiles with skill claims and behavior
+                      ratings.
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+
+                <Card className='bg-secondary/10 border-border/30'>
+                  <CardHeader>
+                    <CardTitle className='flex items-center gap-2 uppercase tracking-wider text-base text-muted-foreground'>
+                      <Swords className='h-4 w-4 text-red-400' />
+                      Trust Matchmaking
+                    </CardTitle>
+                    <CardDescription className='text-xs'>
+                      Priority queues for high-trust players; isolation for
+                      toxic behavior.
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+
+                <Card className='bg-secondary/10 border-border/30'>
+                  <CardHeader>
+                    <CardTitle className='flex items-center gap-2 uppercase tracking-wider text-base text-muted-foreground'>
+                      <Gem className='h-4 w-4 text-purple-400' />
+                      Trust-Weighted Loot
+                    </CardTitle>
+                    <CardDescription className='text-xs'>
+                      Dynamic drop rates influenced by your reputation score.
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
               </div>
-            ),
-            bundles: (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {mockItems.filter(item => item.type === "Bundle").map((item) => (
-                  <ItemCard key={item.id} {...item} />
-                ))}
+
+              {/* Unity SDK Special Section */}
+              <div className='relative overflow-hidden rounded-xl border border-primary/30 bg-gradient-to-br from-zinc-900 to-black p-8'>
+                <div className='absolute top-0 right-0 p-4 opacity-10'>
+                  <Cuboid className='w-48 h-48' />
+                </div>
+
+                <div className='relative z-10 flex flex-col md:flex-row gap-8 items-center justify-between'>
+                  <div className='space-y-4'>
+                    <Badge
+                      variant='outline'
+                      className='bg-primary/10 text-primary border-primary/30 px-4 py-1'
+                    >
+                      FOR DEVELOPERS
+                    </Badge>
+                    <h2 className='text-3xl font-black uppercase italic tracking-tighter'>
+                      Urban Mayhem{' '}
+                      <span className='text-primary'>Unity SDK</span>
+                    </h2>
+                    <p className='text-muted-foreground max-w-md'>
+                      Enable any Unity developer to integrate the Intuition
+                      Trust Protocol.
+                    </p>
+                  </div>
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        size='lg'
+                        className='bg-primary text-primary-foreground hover:bg-primary/90 font-bold tracking-wider'
+                      >
+                        View Technical Specs{' '}
+                        <ChevronRight className='ml-2 h-4 w-4' />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className='max-w-2xl bg-zinc-950 border-primary/20'>
+                      <DialogHeader>
+                        <DialogTitle className='text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3'>
+                          <Cuboid className='h-6 w-6 text-primary' />
+                          Unity SDK Architecture
+                        </DialogTitle>
+                        <DialogDescription className='text-base'>
+                          Complete integration package for the Intuition Trust
+                          Network.
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <div className='grid gap-6 py-4'>
+                        <div className='grid md:grid-cols-2 gap-4'>
+                          <div className='space-y-4'>
+                            <h3 className='font-bold text-primary uppercase text-sm tracking-wider flex items-center gap-2'>
+                              <Code2 className='h-4 w-4' /> Core Components
+                            </h3>
+                            <ul className='space-y-2 text-sm text-muted-foreground'>
+                              <li className='flex items-start gap-2'>
+                                <span className='text-primary'>•</span>{' '}
+                                IntuitionManager.cs (Singleton)
+                              </li>
+                              <li className='flex items-start gap-2'>
+                                <span className='text-primary'>•</span>{' '}
+                                TrustScoreClient.cs
+                              </li>
+                              <li className='flex items-start gap-2'>
+                                <span className='text-primary'>•</span>{' '}
+                                AttestationClient.cs
+                              </li>
+                            </ul>
+                          </div>
+
+                          <div className='space-y-4'>
+                            <h3 className='font-bold text-primary uppercase text-sm tracking-wider flex items-center gap-2'>
+                              <Cpu className='h-4 w-4' /> Prefabs & UI
+                            </h3>
+                            <ul className='space-y-2 text-sm text-muted-foreground'>
+                              <li className='flex items-start gap-2'>
+                                <span className='text-primary'>•</span>{' '}
+                                TrustBadge Component
+                              </li>
+                              <li className='flex items-start gap-2'>
+                                <span className='text-primary'>•</span>{' '}
+                                ReputationPanel UI
+                              </li>
+                              <li className='flex items-start gap-2'>
+                                <span className='text-primary'>•</span>{' '}
+                                TrustBasedStore Template
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+
+                        <div className='border-t border-primary/10 pt-4'>
+                          <h3 className='font-bold text-primary uppercase text-sm tracking-wider flex items-center gap-2 mb-3'>
+                            <Network className='h-4 w-4' /> Capabilities
+                          </h3>
+                          <div className='grid grid-cols-2 gap-2 text-sm'>
+                            <div className='bg-primary/5 border border-primary/10 p-2 rounded text-center'>
+                              Create Player Subjects
+                            </div>
+                            <div className='bg-primary/5 border border-primary/10 p-2 rounded text-center'>
+                              Write Claims & Attestations
+                            </div>
+                            <div className='bg-primary/5 border border-primary/10 p-2 rounded text-center'>
+                              Read Trust Scores
+                            </div>
+                            <div className='bg-primary/5 border border-primary/10 p-2 rounded text-center'>
+                              Trust-Gated Gameplay
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
-            ),
-            weapons: (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {mockItems.filter(item => item.type === "Weapon").map((item) => (
-                  <ItemCard key={item.id} {...item} />
-                ))}
-              </div>
-            ),
-            skins: (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {mockItems.filter(item => item.type === "Skin").map((item) => (
-                  <ItemCard key={item.id} {...item} />
-                ))}
-              </div>
-            ),
-            powerups: (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {mockItems.filter(item => item.type === "Power-up").map((item) => (
-                  <ItemCard key={item.id} {...item} />
-                ))}
-              </div>
-            ),
-          }}
-        </StoreTabs>
+            </div>
+          </section>
+        </div>
       </main>
     </div>
   );

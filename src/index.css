@@ -2,64 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    /* Gaming dark theme - cyberpunk aesthetic */
-    --background: 222 47% 5%;
-    --foreground: 210 40% 98%;
+    /* Premium Gaming Dark Theme - Monochrome with Neon Accents */
+    --background: 0 0% 4%; /* #0A0A0A */
+    --foreground: 0 0% 93%; /* #EDEDED */
 
-    --card: 222 40% 8%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 10%; /* #1A1A1A */
+    --card-foreground: 0 0% 93%;
 
-    --popover: 222 45% 6%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 93%;
 
-    /* Electric purple primary */
-    --primary: 262 83% 58%;
-    --primary-foreground: 210 40% 98%;
+    /* Neon Green Primary */
+    --primary: 156 100% 51%; /* #05FF9D */
+    --primary-foreground: 0 0% 4%;
 
-    /* Deep blue secondary */
-    --secondary: 225 55% 22%;
-    --secondary-foreground: 210 40% 98%;
+    /* Electric Blue Accent */
+    --accent: 208 100% 61%; /* #3BA4FF */
+    --accent-foreground: 0 0% 93%;
 
-    --muted: 217 25% 15%;
-    --muted-foreground: 215 20% 65%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 60%; /* #989898 */
 
-    /* Bright accent purple */
-    --accent: 270 95% 65%;
-    --accent-foreground: 222 47% 5%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 60%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 217 25% 18%;
-    --input: 217 25% 18%;
-    --ring: 262 83% 58%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 156 100% 51%;
 
-    --radius: 0.75rem;
+    --radius: 0.25rem; /* Less rounded, more sharp */
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(242 83% 58%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(262 83% 35%) 0%, hsl(225 55% 22%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(222 40% 8%) 0%, hsl(222 40% 6%) 100%);
-    
+    --gradient-primary: linear-gradient(135deg, #05ff9d 0%, #00cc7a 100%);
+    --gradient-hero: linear-gradient(to right, #0a0a0a, #1a1a1a);
+    --gradient-card: linear-gradient(
+      180deg,
+      rgba(26, 26, 26, 0.5) 0%,
+      rgba(26, 26, 26, 1) 100%
+    );
+
     /* Glows and effects */
-    --glow-primary: 0 0 20px hsl(262 83% 58% / 0.5);
-    --glow-accent: 0 0 30px hsl(270 95% 65% / 0.3);
-    --shadow-elevated: 0 10px 40px -10px hsl(262 83% 20% / 0.4);
-    
+    --glow-primary: 0 0 20px rgba(5, 255, 157, 0.3);
+    --glow-accent: 0 0 20px rgba(59, 164, 255, 0.3);
+    --shadow-elevated: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+
     /* Rarity colors */
-    --rarity-common: 210 15% 55%;
-    --rarity-rare: 200 95% 55%;
-    --rarity-epic: 280 85% 60%;
-    --rarity-legendary: 38 92% 55%;
-    
-    /* Transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --rarity-common: 0 0% 60%; /* #989898 */
+    --rarity-rare: 208 100% 61%; /* #3BA4FF */
+    --rarity-epic: 35 100% 50%; /* Orange instead of Purple */
+    --rarity-legendary: 48 100% 50%; /* Gold */
   }
 }
 
@@ -67,38 +63,46 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    @apply bg-background text-foreground font-sans antialiased;
   }
-  
+
   /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
-  
+
   ::-webkit-scrollbar-track {
     @apply bg-background;
   }
-  
+
   ::-webkit-scrollbar-thumb {
-    @apply bg-muted rounded-full;
-    border: 2px solid hsl(var(--background));
+    @apply bg-secondary rounded-full;
   }
-  
+
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-primary;
+    @apply bg-primary/50;
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
+@layer utilities {
+  .text-neon-green {
+    color: #05ff9d;
   }
-
-  body {
-    @apply bg-background text-foreground;
+  .text-electric-blue {
+    color: #3ba4ff;
+  }
+  .bg-neon-green {
+    background-color: #05ff9d;
+  }
+  .bg-electric-blue {
+    background-color: #3ba4ff;
+  }
+  .shadow-glow-green {
+    box-shadow: 0 0 20px -5px rgba(5, 255, 157, 0.3);
+  }
+  .shadow-glow-blue {
+    box-shadow: 0 0 20px -5px rgba(59, 164, 255, 0.3);
   }
 }

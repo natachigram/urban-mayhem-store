@@ -1,8 +1,9 @@
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ShoppingCart, TrendingUp } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Eye, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import type { Item } from '@/types/database';
 
 export interface ItemCardProps {
   id: string;
@@ -10,90 +11,94 @@ export interface ItemCardProps {
   type: string;
   imageUrl: string;
   price: number;
-  rarity: "common" | "rare" | "epic" | "legendary";
-  attestationScore?: number;
-  creator?: {
-    name: string;
-    avatar?: string;
-  };
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  // Pass full item for cart
+  item?: Item;
 }
 
 const rarityColors = {
-  common: "text-rarity-common border-rarity-common",
-  rare: "text-rarity-rare border-rarity-rare",
-  epic: "text-rarity-epic border-rarity-epic",
-  legendary: "text-rarity-legendary border-rarity-legendary",
+  common: 'text-rarity-common border-rarity-common bg-rarity-common/10',
+  rare: 'text-rarity-rare border-rarity-rare bg-rarity-rare/10',
+  epic: 'text-rarity-epic border-rarity-epic bg-rarity-epic/10',
+  legendary:
+    'text-rarity-legendary border-rarity-legendary bg-rarity-legendary/10',
 };
 
-export const ItemCard = ({ 
-  id, 
-  name, 
-  type, 
-  imageUrl, 
-  price, 
-  rarity, 
-  attestationScore,
-  creator 
+const rarityBorders = {
+  common: 'border-rarity-common',
+  rare: 'border-rarity-rare',
+  epic: 'border-rarity-epic',
+  legendary: 'border-rarity-legendary',
+};
+
+export const ItemCard = ({
+  id,
+  name,
+  type,
+  imageUrl,
+  price,
+  rarity,
 }: ItemCardProps) => {
   return (
     <Link to={`/item/${id}`}>
-      <Card className="group relative overflow-hidden border-border/40 bg-gradient-card transition-all hover:border-primary/50 hover:shadow-glow-primary">
+      <Card
+        className={`group relative overflow-hidden border bg-card transition-all hover:scale-[1.02] hover:shadow-lg ${
+          rarityBorders[rarity]
+        } hover:shadow-${
+          rarity === 'rare'
+            ? 'glow-blue'
+            : rarity === 'legendary'
+            ? 'glow-primary'
+            : 'none'
+        }`}
+      >
         {/* Image Container */}
-        <div className="relative aspect-square overflow-hidden bg-secondary/20">
-          <img 
-            src={imageUrl} 
+        <div className='relative aspect-[4/3] overflow-hidden bg-secondary/20'>
+          <img
+            src={imageUrl}
             alt={name}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-110'
           />
-          
+
+          {/* Gradient Overlay */}
+          <div className='absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-80'></div>
+
           {/* Rarity Badge */}
-          <Badge 
-            variant="outline" 
-            className={`absolute right-2 top-2 ${rarityColors[rarity]} backdrop-blur-sm bg-background/80`}
+          <Badge
+            variant='outline'
+            className={`absolute left-2 top-2 uppercase tracking-wider text-[10px] font-bold ${rarityColors[rarity]} backdrop-blur-md border`}
           >
             {rarity}
           </Badge>
-
-          {/* Attestation Score */}
-          {attestationScore !== undefined && (
-            <div className="absolute left-2 top-2 flex items-center gap-1 rounded-md bg-background/80 px-2 py-1 backdrop-blur-sm">
-              <TrendingUp className="h-3 w-3 text-primary" />
-              <span className="text-xs font-bold text-primary">{attestationScore}</span>
-            </div>
-          )}
         </div>
 
         {/* Content */}
-        <div className="p-4">
-          <div className="mb-2">
-            <p className="text-xs text-muted-foreground uppercase tracking-wide">{type}</p>
-            <h3 className="text-lg font-bold text-foreground line-clamp-1">{name}</h3>
+        <div className='p-4 relative'>
+          <div className='mb-3'>
+            <p className='text-xs text-muted-foreground uppercase tracking-widest font-semibold mb-1'>
+              {type}
+            </p>
+            <h3 className='text-lg font-bold text-foreground line-clamp-1 tracking-tight group-hover:text-primary transition-colors'>
+              {name}
+            </h3>
           </div>
 
-          {/* Creator Info */}
-          {creator && (
-            <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
-              <span>by</span>
-              <span className="font-medium text-foreground">{creator.name}</span>
-            </div>
-          )}
-
           {/* Price and Action */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-primary">${price}</span>
+          <div className='flex items-center justify-between mt-4'>
+            <div className='flex items-center gap-1.5'>
+              <Zap className='w-4 h-4 text-primary fill-primary' />
+              <span className='text-xl font-bold text-foreground'>
+                {price.toLocaleString()}
+              </span>
             </div>
-            
-            <Button 
-              size="sm" 
-              className="gap-2 bg-primary hover:bg-primary/90 shadow-glow-primary"
-              onClick={(e) => {
-                e.preventDefault();
-                // Add to cart logic
-              }}
+
+            <Button
+              size='sm'
+              variant='secondary'
+              className='gap-2 font-bold uppercase tracking-wider text-xs h-8'
             >
-              <ShoppingCart className="h-4 w-4" />
-              <span className="hidden sm:inline">Buy</span>
+              <Eye className='h-3.5 w-3.5' />
+              View
             </Button>
           </div>
         </div>
