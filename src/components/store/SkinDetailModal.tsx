@@ -14,11 +14,14 @@ import {
   Users,
   Activity,
   User,
+  Star,
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 import { usePayment } from '@/hooks/usePayment';
+import { TrustScoreBadge } from './TrustScoreBadge';
+import { RateItemModal } from './RateItemModal';
 
 interface Skin {
   id: string;
@@ -48,6 +51,7 @@ export const SkinDetailModal = ({
   const [playerId, setPlayerId] = useState('');
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
+  const [rateModalOpen, setRateModalOpen] = useState(false);
   const { isConnected } = useAccount();
   const { pay, isProcessing: isPurchasing } = usePayment();
 
@@ -143,7 +147,7 @@ export const SkinDetailModal = ({
         </div>
 
         {/* Right Side - Details */}
-        <div className='w-full md:w-[400px] bg-card border-l border-border/50 p-8 flex flex-col'>
+        <div className='w-full md:w-[400px] bg-card border-l border-border/50 p-8 flex flex-col overflow-y-auto'>
           <div className='flex-1 space-y-6'>
             <div>
               <div className='flex items-center justify-between mb-2'>
@@ -210,6 +214,25 @@ export const SkinDetailModal = ({
             </div>
 
             <div className='space-y-4'>
+              {/* Trust Score Display */}
+              <div className='p-4 bg-secondary/20 rounded-lg border border-border/50'>
+                <div className='flex items-center justify-between mb-3'>
+                  <h3 className='text-sm font-bold uppercase text-muted-foreground'>
+                    Community Trust
+                  </h3>
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    onClick={() => setRateModalOpen(true)}
+                    className='h-7 text-xs gap-1.5'
+                  >
+                    <Star className='h-3.5 w-3.5' />
+                    Rate
+                  </Button>
+                </div>
+                <TrustScoreBadge itemId={skin.id} variant='default' />
+              </div>
+
               <div className='p-4 bg-secondary/20 rounded-lg border border-border/50'>
                 <h3 className='text-sm font-bold uppercase text-muted-foreground mb-2'>
                   Description
@@ -276,6 +299,17 @@ export const SkinDetailModal = ({
           </div>
         </div>
       </DialogContent>
+
+      {/* Rate Item Modal */}
+      <RateItemModal
+        open={rateModalOpen}
+        onOpenChange={setRateModalOpen}
+        itemId={skin.id}
+        itemName={skin.name}
+        onSuccess={() => {
+          toast.success('Thank you for your rating!');
+        }}
+      />
     </Dialog>
   );
 };

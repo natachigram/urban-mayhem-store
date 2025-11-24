@@ -85,12 +85,48 @@ const History = () => {
     try {
       const { data, error } = await supabase
         .from('purchases')
-        .select('*')
+        .select('*, items(*)')
         .eq('user_wallet', address)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setPurchases(data || []);
+
+      // Check if user has rated each purchased item
+      if (data) {
+        const purchasesWithRatings = await Promise.all(
+          data.map(async (purchase) => {
+            // Check if user has any attestations for this item
+            const { data: itemAtom } = await supabase
+              .from('atoms')
+              .select('atom_id')
+              .eq('entity_type', 'item')
+              .eq('entity_id', purchase.item_id)
+              .single();
+
+            if (itemAtom) {
+              const { data: attestations } = await supabase
+                .from('attestations')
+                .select('id')
+                .eq('creator_wallet', address)
+                .eq('subject_atom_id', itemAtom.atom_id)
+                .limit(1);
+
+              return {
+                ...purchase,
+                hasUserRated: (attestations?.length || 0) > 0,
+              };
+            }
+
+            return {
+              ...purchase,
+              hasUserRated: false,
+            };
+          })
+        );
+        setPurchases(purchasesWithRatings);
+      } else {
+        setPurchases([]);
+      }
     } catch (error) {
       console.error('Failed to fetch purchases:', error);
     } finally {
@@ -352,9 +388,20 @@ const History = () => {
                       {new Date(purchase.created_at).toLocaleString()}
                     </TableCell>
                     <TableCell>
-                      <span className='font-mono text-sm'>
-                        {purchase.metadata?.item_identifier || purchase.item_id}
-                      </span>
+                      <div className='flex items-center gap-2'>
+                        <span className='font-mono text-sm'>
+                          {purchase.metadata?.item_identifier ||
+                            purchase.item_id}
+                        </span>
+                        {purchase.hasUserRated && (
+                          <Badge
+                            variant='secondary'
+                            className='text-[10px] bg-green-500/10 text-green-500 border-green-500/20'
+                          >
+                            Rated ✓
+                          </Badge>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <span className='font-mono text-sm text-primary'>

@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Eye, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { Item } from '@/types/database';
+import { TrustScoreBadge } from './TrustScoreBadge';
+import { SocialProof } from './SocialProof';
 
 export interface ItemCardProps {
   id: string;
@@ -70,6 +72,11 @@ export const ItemCard = ({
           >
             {rarity}
           </Badge>
+
+          {/* Trust Score Badge */}
+          <div className='absolute right-2 top-2'>
+            <TrustScoreBadge itemId={id} variant='compact' />
+          </div>
         </div>
 
         {/* Content */}
@@ -81,6 +88,11 @@ export const ItemCard = ({
             <h3 className='text-lg font-bold text-foreground line-clamp-1 tracking-tight group-hover:text-primary transition-colors'>
               {name}
             </h3>
+          </div>
+
+          {/* Social Proof */}
+          <div className='mb-3'>
+            <SocialProof itemId={id} compact />
           </div>
 
           {/* Price and Action */}

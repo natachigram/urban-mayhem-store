@@ -116,6 +116,12 @@ export const Header = () => {
             >
               History
             </Link>
+            <Link
+              to='/attestations'
+              className='text-sm font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-wider'
+            >
+              Attestations
+            </Link>
           </nav>
         </div>
 

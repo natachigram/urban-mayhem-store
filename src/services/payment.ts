@@ -13,8 +13,14 @@ import {
   verifyTransaction,
   checkNetwork,
   switchToIntuitionNetwork,
+  intuitionTestnet,
 } from '@/lib/blockchain';
 import { supabase } from './supabase';
+import {
+  createPlayerAtom,
+  getCachedAtom,
+  type IntuitionClients,
+} from './intuition';
 
 export interface PaymentRequest {
   itemId: string;
@@ -43,6 +49,40 @@ export const processPayment = async (
   request: PaymentRequest
 ): Promise<PaymentResponse> => {
   try {
+    // Step 0: Check if player atom exists, create if first-time user
+    const playerAtom = await getCachedAtom(
+      'player',
+      request.userWallet.toLowerCase()
+    );
+
+    if (!playerAtom) {
+      console.log('🆕 First-time player detected. Creating player atom...');
+
+      // Get wallet client for atom creation
+      const walletClient = await getWalletClient();
+      const publicClientInstance = publicClient;
+
+      const clients: IntuitionClients = {
+        walletClient,
+        publicClient: publicClientInstance,
+        chainId: intuitionTestnet.id,
+      };
+
+      try {
+        await createPlayerAtom(clients, request.userWallet);
+        console.log('✅ Player atom created successfully');
+      } catch (atomError: any) {
+        console.error('❌ Failed to create player atom:', atomError);
+        return {
+          success: false,
+          message: 'Failed to initialize player profile. Please try again.',
+          error: 'PLAYER_ATOM_CREATION_FAILED',
+        };
+      }
+    } else {
+      console.log('✅ Player atom already exists:', playerAtom.atom_id);
+    }
+
     // Step 1: Verify network
     const isCorrectNetwork = await checkNetwork();
     if (!isCorrectNetwork) {

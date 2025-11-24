@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/select';
 import { Coins, Search, Filter, ShieldCheck, Users } from 'lucide-react';
 import { SkinDetailModal } from './SkinDetailModal';
+import { SocialProof } from './SocialProof';
 
 // Mock Data for Skins
 const SKINS = [
@@ -201,19 +202,10 @@ export const SkinsSection = () => {
               </Badge>
             </div>
 
-            {/* Trust Score Badge */}
+            {/* Real-time Trust Score from Attestations */}
             <div className='absolute top-2 right-2 z-10'>
-              <div className='flex items-center gap-1 bg-background/80 backdrop-blur px-2 py-1 rounded-sm border border-border/50'>
-                <ShieldCheck
-                  className={`h-3 w-3 ${getTrustColor(skin.trustScore)}`}
-                />
-                <span
-                  className={`text-[10px] font-black ${getTrustColor(
-                    skin.trustScore
-                  )}`}
-                >
-                  {skin.trustScore}%
-                </span>
+              <div className='bg-background/90 backdrop-blur-sm px-2 py-1 rounded-sm border border-border/50'>
+                <SocialProof itemId={skin.id} compact />
               </div>
             </div>
 

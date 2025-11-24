@@ -9,6 +9,7 @@ import ItemDetail from './pages/ItemDetail';
 import TopUp from './pages/TopUp';
 import History from './pages/History';
 import Admin from './pages/Admin';
+import Attestations from './pages/AttestationsEnhanced';
 import ComingSoon from './pages/ComingSoon';
 import NotFound from './pages/NotFound';
 
@@ -41,6 +42,7 @@ const App = () => (
             <Route path='/item/:id' element={<ItemDetail />} />
             <Route path='/top-up' element={<TopUp />} />
             <Route path='/history' element={<History />} />
+            <Route path='/attestations' element={<Attestations />} />
             <Route path='/admin' element={<Admin />} />
             <Route
               path='/profile'

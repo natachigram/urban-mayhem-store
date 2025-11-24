@@ -111,7 +111,19 @@ export const getWalletClient = async () => {
     transport: custom(window.ethereum),
   });
 
-  return walletClient;
+  // Get the connected account and attach it to the wallet client
+  const [account] = await walletClient.getAddresses();
+
+  if (!account) {
+    throw new Error('No account found. Please connect your wallet.');
+  }
+
+  // Return wallet client with account attached
+  return createWalletClient({
+    account,
+    chain: intuitionTestnet,
+    transport: custom(window.ethereum),
+  });
 };
 
 // Convert amount to token units (handle decimals)
