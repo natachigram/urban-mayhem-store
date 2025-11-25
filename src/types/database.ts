@@ -13,6 +13,7 @@ export type PurchaseStatus = 'pending' | 'completed' | 'failed' | 'refunded';
 
 export interface Item {
   id: string;
+  identifier?: string; // Unique identifier for atom matching (e.g., 'skin_1', 'pkg_1')
   name: string;
   type: ItemType;
   description?: string;

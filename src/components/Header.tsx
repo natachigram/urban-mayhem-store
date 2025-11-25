@@ -1,14 +1,17 @@
 import { Link } from 'react-router-dom';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useBalance } from 'wagmi';
-import { Coins, Zap } from 'lucide-react';
+import { Coins, Zap, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/services/supabase';
 import { intuitionTestnet } from '@/lib/blockchain';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
 
 export const Header = () => {
   const { address, isConnected, chain } = useAccount();
   const [umpBalance, setUmpBalance] = useState<number>(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Fetch real UMP Balance from user_inventory
   useEffect(() => {
@@ -148,6 +151,7 @@ export const Header = () => {
             </div>
           </Link>
 
+          {/* Desktop Navigation */}
           <nav className='hidden md:flex gap-6'>
             <Link
               to='/'
@@ -168,6 +172,43 @@ export const Header = () => {
               Attestations
             </Link>
           </nav>
+
+          {/* Mobile Menu */}
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild className='md:hidden'>
+              <Button variant='ghost' size='icon' className='text-foreground'>
+                <Menu className='h-6 w-6' />
+              </Button>
+            </SheetTrigger>
+            <SheetContent
+              side='left'
+              className='w-[250px] bg-background border-border'
+            >
+              <nav className='flex flex-col gap-6 mt-8'>
+                <Link
+                  to='/'
+                  onClick={() => setMobileMenuOpen(false)}
+                  className='text-lg font-bold text-foreground hover:text-primary transition-colors uppercase tracking-wider'
+                >
+                  Store
+                </Link>
+                <Link
+                  to='/history'
+                  onClick={() => setMobileMenuOpen(false)}
+                  className='text-lg font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-wider'
+                >
+                  History
+                </Link>
+                <Link
+                  to='/attestations'
+                  onClick={() => setMobileMenuOpen(false)}
+                  className='text-lg font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-wider'
+                >
+                  Attestations
+                </Link>
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
 
         <div className='flex items-center gap-4'>

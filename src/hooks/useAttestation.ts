@@ -17,16 +17,27 @@ import {
 import { useToast } from './use-toast';
 
 /**
- * Fetch item data from Supabase by UUID
+ * Fetch item data from Supabase by UUID or identifier
  */
 const getStoreItemData = async (itemId: string) => {
   try {
     const { supabase } = await import('@/services/supabase');
-    const { data, error } = await supabase
+
+    // Try by identifier first (for atom matching)
+    let { data, error } = await supabase
       .from('items')
       .select('*')
-      .eq('id', itemId)
+      .eq('identifier', itemId)
       .single();
+
+    // Fallback to UUID if identifier not found
+    if (error || !data) {
+      ({ data, error } = await supabase
+        .from('items')
+        .select('*')
+        .eq('id', itemId)
+        .single());
+    }
 
     if (error) throw error;
     return data;
@@ -48,7 +59,7 @@ export const useAttestation = () => {
    */
   const attestItem = useCallback(
     async (params: {
-      itemId: string; // e.g., 'pkg_1', 'skin_3'
+      itemId: string; // UUID or identifier (e.g., 'pkg_1', 'skin_3')
       predicate: keyof typeof PREDICATES;
       stakeAmount: bigint; // Amount in wei
       comment?: string; // Optional review text
@@ -71,8 +82,17 @@ export const useAttestation = () => {
           chainId: intuitionTestnet.id,
         };
 
+        // Get item data to find identifier
+        const itemData = await getStoreItemData(params.itemId);
+        if (!itemData) {
+          throw new Error('Item not found in store catalog');
+        }
+
+        // Use identifier for atom matching (falls back to id if no identifier)
+        const atomEntityId = itemData.identifier || itemData.id;
+
         // 1. Get item atom
-        let itemAtom = await getCachedAtom('item', params.itemId);
+        let itemAtom = await getCachedAtom('item', atomEntityId);
 
         // Auto-create atom if not found
         if (!itemAtom) {
@@ -81,17 +101,10 @@ export const useAttestation = () => {
             description: 'Creating attestation infrastructure for this item',
           });
 
-          // Get item data from database
-          const itemData = await getStoreItemData(params.itemId);
-
-          if (!itemData) {
-            throw new Error('Item not found in store catalog');
-          }
-
-          // Create item atom
+          // Create item atom using identifier or id
           const { createItemAtom } = await import('@/services/intuition');
           await createItemAtom(clients, {
-            id: itemData.id,
+            id: atomEntityId, // Use identifier for consistency
             name: itemData.name,
             description: itemData.description,
             imageUrl: itemData.image_url,
@@ -99,7 +112,7 @@ export const useAttestation = () => {
           });
 
           // Fetch newly created atom
-          itemAtom = await getCachedAtom('item', params.itemId);
+          itemAtom = await getCachedAtom('item', atomEntityId);
           if (!itemAtom) {
             throw new Error('Failed to initialize item atom');
           }
