@@ -66,11 +66,9 @@ coverage
 .next
 .nuxt
 
-# Documentation (ignore all README files)
-README*.md
-readme*.md
-README*.txt
-readme*.txt
+# Documentation (ignore all markdown files)
+*.md
+*.MD
 
 # Lock files (optional - uncomment if you want to ignore)
 # package-lock.json
