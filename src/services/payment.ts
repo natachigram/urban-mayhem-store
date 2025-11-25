@@ -155,7 +155,7 @@ export const processPayment = async (
     const TRUST_TOKEN_ADDRESS = import.meta.env
       .VITE_TRUST_TOKEN_ADDRESS as Address;
 
-    if (!TRUST_TOKEN_ADDRESS) {
+    if (!TRUST_TOKEN_ADDRESS || TRUST_TOKEN_ADDRESS.trim() === '') {
       // Fallback: Send native ETH if no token configured
       const hash = await walletClient.sendTransaction({
         account,
@@ -396,7 +396,7 @@ export const getTrustBalance = async (
     const TRUST_TOKEN_ADDRESS = import.meta.env
       .VITE_TRUST_TOKEN_ADDRESS as Address;
 
-    if (!TRUST_TOKEN_ADDRESS) {
+    if (!TRUST_TOKEN_ADDRESS || TRUST_TOKEN_ADDRESS.trim() === '') {
       // Fallback to native balance
       const balance = await publicClient.getBalance({ address: walletAddress });
       return Number(balance) / 10 ** 18;
