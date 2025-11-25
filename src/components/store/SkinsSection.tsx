@@ -28,7 +28,6 @@ export const SkinsSection = () => {
   const [skins, setSkins] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     loadSkins();
