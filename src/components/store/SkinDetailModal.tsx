@@ -131,7 +131,7 @@ export const SkinDetailModal = ({
             </Button>
           </div>
 
-          {/* Image */}
+          {/* Image - Use full body image */}
           <div
             className='relative z-0 transition-all duration-500 ease-out'
             style={{

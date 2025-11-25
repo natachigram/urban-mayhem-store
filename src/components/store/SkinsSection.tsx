@@ -149,7 +149,7 @@ export const SkinsSection = () => {
           </p>
         </div>
       ) : (
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
           {filteredSkins.map((skin) => (
             <Card
               key={skin.id}
@@ -175,13 +175,13 @@ export const SkinsSection = () => {
                 </div>
               </div>
 
-              {/* Image Container */}
+              {/* Image Container - Use headshot (_2) image */}
               <div className='aspect-[3/4] relative overflow-hidden bg-gradient-to-b from-secondary/20 to-background p-4 flex items-center justify-center'>
                 <div className='absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity' />
                 <img
-                  src={skin.image_url}
+                  src={skin.gallery_images?.[1] || skin.image_url}
                   alt={skin.name}
-                  className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-110'
+                  className='w-full h-full object-contain transition-transform duration-500 group-hover:scale-110'
                 />
               </div>
 

@@ -12,6 +12,9 @@ import {
   Cpu,
   Network,
   ChevronRight,
+  Users,
+  Activity,
+  ShieldCheck,
 } from 'lucide-react';
 import {
   Card,
@@ -62,11 +65,12 @@ const Store = () => {
                   <CardHeader>
                     <CardTitle className='flex items-center gap-2 uppercase tracking-wider text-base text-muted-foreground'>
                       <Shield className='h-4 w-4 text-blue-400' />
-                      Reputation Identity
+                      Player Reputation System
                     </CardTitle>
                     <CardDescription className='text-xs'>
-                      On-chain player profiles with skill claims and behavior
-                      ratings.
+                      Trust scores for players with skill claims, win/loss
+                      history, and behavior ratings powered by Intuition
+                      Protocol.
                     </CardDescription>
                   </CardHeader>
                 </Card>
@@ -75,11 +79,11 @@ const Store = () => {
                   <CardHeader>
                     <CardTitle className='flex items-center gap-2 uppercase tracking-wider text-base text-muted-foreground'>
                       <Swords className='h-4 w-4 text-red-400' />
-                      Trust Matchmaking
+                      Trust-Weighted Matchmaking
                     </CardTitle>
                     <CardDescription className='text-xs'>
-                      Priority queues for high-trust players; isolation for
-                      toxic behavior.
+                      Queue players based on trust scores - high-trust priority
+                      queues, low-trust players matched together.
                     </CardDescription>
                   </CardHeader>
                 </Card>
@@ -88,10 +92,50 @@ const Store = () => {
                   <CardHeader>
                     <CardTitle className='flex items-center gap-2 uppercase tracking-wider text-base text-muted-foreground'>
                       <Gem className='h-4 w-4 text-purple-400' />
-                      Trust-Weighted Loot
+                      Trust-Influenced Loot System
                     </CardTitle>
                     <CardDescription className='text-xs'>
-                      Dynamic drop rates influenced by your reputation score.
+                      Weighted reward chances based on player trust, community
+                      attestation of item rarity, and fair play behavior.
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+
+                <Card className='bg-secondary/10 border-border/30'>
+                  <CardHeader>
+                    <CardTitle className='flex items-center gap-2 uppercase tracking-wider text-base text-muted-foreground'>
+                      <Users className='h-4 w-4 text-green-400' />
+                      Creator Marketplace
+                    </CardTitle>
+                    <CardDescription className='text-xs'>
+                      Community-designed items with creator attestations,
+                      earnings tracking, and reputation multipliers.
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+
+                <Card className='bg-secondary/10 border-border/30'>
+                  <CardHeader>
+                    <CardTitle className='flex items-center gap-2 uppercase tracking-wider text-base text-muted-foreground'>
+                      <Activity className='h-4 w-4 text-yellow-400' />
+                      Advanced Attestations
+                    </CardTitle>
+                    <CardDescription className='text-xs'>
+                      Detailed reviews, ratings, and anti-cheat proofs using
+                      Intuition's attestation framework.
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+
+                <Card className='bg-secondary/10 border-border/30'>
+                  <CardHeader>
+                    <CardTitle className='flex items-center gap-2 uppercase tracking-wider text-base text-muted-foreground'>
+                      <ShieldCheck className='h-4 w-4 text-cyan-400' />
+                      Smart Contract Aggregator
+                    </CardTitle>
+                    <CardDescription className='text-xs'>
+                      On-chain trust score registry reading Intuition
+                      attestations for decentralized trust computation.
                     </CardDescription>
                   </CardHeader>
                 </Card>
@@ -113,12 +157,20 @@ const Store = () => {
                     </Badge>
                     <h2 className='text-3xl font-black uppercase italic tracking-tighter'>
                       Urban Mayhem{' '}
-                      <span className='text-primary'>Unity SDK</span>
+                      <span className='text-primary'>Unity SDK & Tools</span>
                     </h2>
                     <p className='text-muted-foreground max-w-md'>
-                      Enable any Unity developer to integrate the Intuition
-                      Trust Protocol.
+                      Integration package for external game studios: Unity SDK
+                      for trust-based features, creator dashboard for tracking
+                      community items/payouts, and open-source attestation
+                      templates.
                     </p>
+                    <Badge
+                      variant='secondary'
+                      className='text-xs font-normal opacity-60'
+                    >
+                      Post-Hackathon Release
+                    </Badge>
                   </div>
 
                   <Dialog>
