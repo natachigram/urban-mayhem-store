@@ -34,31 +34,76 @@ export const Header = () => {
     if (!address) return;
 
     try {
-      // Fetch all completed purchases for this wallet
-      const { data: purchases, error } = await supabase
+      // Fetch all completed purchases (don't lowercase the address - DB stores mixed case)
+      const { data: purchases, error: purchaseError } = await supabase
         .from('purchases')
         .select('quantity, metadata')
-        .eq('user_wallet', address)
+        .eq('user_wallet', address) // Keep original case
         .eq('status', 'completed');
 
-      if (error) throw error;
+      if (purchaseError) throw purchaseError;
 
-      console.log('📦 Fetched purchases for UMP calculation:', purchases);
+      if (!purchases || purchases.length === 0) {
+        console.log('📦 No completed purchases found for:', address);
+        setUmpBalance(0);
+        return;
+      }
 
-      // Calculate UMP from purchase metadata
-      const totalUmp =
-        purchases?.reduce((sum, purchase) => {
-          const itemId = purchase.metadata?.item_identifier;
-          const quantity = purchase.quantity || 1;
+      console.log('📦 Fetched purchases:', purchases);
 
-          // UMP Package pricing (from prefabs.json)
-          if (itemId === 'pkg_1') return sum + 500 * quantity; // Starter Pack
-          if (itemId === 'pkg_2') return sum + 1200 * quantity; // Pro Pack
-          if (itemId === 'pkg_3') return sum + 2500 * quantity; // Elite Pack
-          if (itemId === 'pkg_4') return sum + 5500 * quantity; // Ultimate Pack
+      // Extract item identifiers from metadata
+      const itemIdentifiers = purchases
+        .map((p) => p.metadata?.item_identifier)
+        .filter(Boolean);
 
-          return sum;
-        }, 0) || 0;
+      if (itemIdentifiers.length === 0) {
+        console.log('⚠️ No item identifiers found in purchases');
+        setUmpBalance(0);
+        return;
+      }
+
+      // Fetch all UMP items
+      const { data: allItems, error: itemsError } = await supabase
+        .from('items')
+        .select('id, name, type, metadata')
+        .eq('type', 'ump');
+
+      if (itemsError) throw itemsError;
+
+      // Build lookup map by checking name patterns (legacy item_identifier mapping)
+      const itemMap = new Map();
+      allItems?.forEach((item) => {
+        // Map by item name patterns (Starter Pack -> pkg_1, Pro Pack -> pkg_2, etc)
+        if (item.name.includes('Starter')) itemMap.set('pkg_1', item);
+        if (item.name.includes('Pro')) itemMap.set('pkg_2', item);
+        if (item.name.includes('Elite')) itemMap.set('pkg_3', item);
+        if (item.name.includes('Warlord')) itemMap.set('pkg_4', item);
+
+        // Also map by UUID if it matches
+        itemMap.set(item.id, item);
+      });
+
+      console.log('🗺️ Item map size:', itemMap.size);
+
+      // Calculate UMP from purchases using metadata
+      const totalUmp = purchases.reduce((sum, purchase) => {
+        const itemIdentifier = purchase.metadata?.item_identifier;
+        const quantity = purchase.quantity || 1;
+
+        // Look up the item
+        const item = itemMap.get(itemIdentifier);
+
+        if (item && item.type === 'ump' && item.metadata?.ump_amount) {
+          console.log(
+            `✅ Found UMP: ${item.name} = ${item.metadata.ump_amount} x ${quantity}`
+          );
+          return sum + item.metadata.ump_amount * quantity;
+        } else if (itemIdentifier) {
+          console.log(`⚠️ Item not found for identifier: ${itemIdentifier}`);
+        }
+
+        return sum;
+      }, 0);
 
       console.log('💰 Total UMP Balance:', totalUmp);
       setUmpBalance(totalUmp);

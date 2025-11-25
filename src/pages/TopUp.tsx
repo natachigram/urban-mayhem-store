@@ -18,14 +18,8 @@ import {
 import { parseEther } from 'viem';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-// Mock UMP Packages
-const UMP_PACKAGES = [
-  { amount: 50, price: 500, bonus: 0, popular: false },
-  { amount: 100, price: 950, bonus: 5, popular: true },
-  { amount: 500, price: 4500, bonus: 50, popular: false },
-  { amount: 1000, price: 8000, bonus: 200, popular: false },
-];
+import { getItemsByType } from '@/services/items';
+import type { Item } from '@/types/database';
 
 // Mock ERC20 ABI for transfer (simplified)
 const ERC20_ABI = [
@@ -53,11 +47,32 @@ const TopUp = () => {
       hash,
     });
 
-  const [selectedPackage, setSelectedPackage] = useState<
-    (typeof UMP_PACKAGES)[0] | null
-  >(null);
+  const [umpPackages, setUmpPackages] = useState<Item[]>([]);
+  const [isLoadingPackages, setIsLoadingPackages] = useState(true);
+  const [selectedPackage, setSelectedPackage] = useState<Item | null>(null);
 
-  const handlePurchase = (pkg: (typeof UMP_PACKAGES)[0]) => {
+  // Load UMP packages from database
+  useEffect(() => {
+    const loadPackages = async () => {
+      try {
+        const packages = await getItemsByType('ump');
+        setUmpPackages(packages);
+      } catch (error) {
+        console.error('Failed to load UMP packages:', error);
+        toast({
+          title: 'Failed to load packages',
+          description: 'Could not fetch UMP packages from database',
+          variant: 'destructive',
+        });
+      } finally {
+        setIsLoadingPackages(false);
+      }
+    };
+
+    loadPackages();
+  }, [toast]);
+
+  const handlePurchase = (pkg: Item) => {
     if (!isConnected) {
       toast({
         title: 'Wallet not connected',
@@ -81,7 +96,9 @@ const TopUp = () => {
       // });
 
       // Simulating transaction for UI demo since we don't have a real contract on a testnet here
-      console.log(`Purchasing ${pkg.amount} UMP for ${pkg.price} $TRUST`);
+      console.log(
+        `Purchasing ${pkg.metadata?.ump_amount} UMP for ${pkg.price} $TRUST`
+      );
       toast({
         title: 'Transaction Initiated',
         description: 'Please confirm the transaction in your wallet.',
@@ -91,7 +108,7 @@ const TopUp = () => {
       setTimeout(() => {
         toast({
           title: 'Purchase Successful',
-          description: `Successfully purchased ${pkg.amount} UMP! Balance updated.`,
+          description: `Successfully purchased ${pkg.metadata?.ump_amount} UMP! Balance updated.`,
           className: 'bg-primary text-primary-foreground border-none',
         });
       }, 2000);
@@ -109,7 +126,7 @@ const TopUp = () => {
     if (isConfirmed && selectedPackage) {
       toast({
         title: 'Transaction Confirmed',
-        description: `Successfully purchased ${selectedPackage.amount} UMP!`,
+        description: `Successfully purchased ${selectedPackage.metadata?.ump_amount} UMP!`,
         className: 'bg-primary text-primary-foreground border-none',
       });
       // Here we would trigger a backend sync
@@ -148,78 +165,89 @@ const TopUp = () => {
           </p>
         </div>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-          {UMP_PACKAGES.map((pkg, index) => (
-            <Card
-              key={index}
-              className={`relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-primary hover:shadow-[0_0_30px_-5px_rgba(5,255,157,0.3)] group rounded-none ${
-                pkg.popular
-                  ? 'border-primary shadow-[0_0_20px_-10px_rgba(5,255,157,0.3)] scale-105 z-10'
-                  : ''
-              }`}
-            >
-              {pkg.popular && (
-                <div className='absolute top-0 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest px-4 py-1 skew-x-[-10deg] shadow-glow-green w-full text-center'>
-                  Best Value
-                </div>
-              )}
+        {isLoadingPackages ? (
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+            {[...Array(4)].map((_, i) => (
+              <Card key={i} className='animate-pulse'>
+                <CardHeader className='h-32' />
+                <CardContent className='h-24' />
+                <CardFooter className='h-20' />
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+            {umpPackages.map((pkg) => {
+              const umpAmount = pkg.metadata?.ump_amount || 0;
+              const isBestValue = pkg.metadata?.best_value === true;
 
-              {pkg.bonus > 0 && (
-                <div className='absolute top-8 right-0 bg-accent text-accent-foreground text-xs font-bold px-2 py-1 uppercase tracking-wider skew-x-[-10deg]'>
-                  +{pkg.bonus} Bonus
-                </div>
-              )}
-
-              <CardHeader className='pb-2 pt-10 text-center'>
-                <CardTitle className='flex flex-col items-center gap-2 text-4xl font-black italic tracking-tighter'>
-                  <Coins className='w-10 h-10 text-primary group-hover:animate-pulse' />
-                  {pkg.amount}
-                  <span className='text-sm font-bold text-muted-foreground not-italic tracking-widest'>
-                    UMP
-                  </span>
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent className='py-6 text-center'>
-                <div className='flex items-baseline justify-center gap-1'>
-                  <span className='text-2xl font-bold text-foreground tracking-tight'>
-                    {pkg.price}
-                  </span>
-                  <span className='text-sm text-muted-foreground font-bold'>
-                    $TRUST
-                  </span>
-                </div>
-              </CardContent>
-
-              <CardFooter>
-                <Button
-                  className={`w-full h-12 uppercase font-bold tracking-wider rounded-none ${
-                    pkg.popular
-                      ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-glow-green'
-                      : 'bg-secondary hover:bg-secondary/80 text-foreground'
+              return (
+                <Card
+                  key={pkg.id}
+                  className={`relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-primary hover:shadow-[0_0_30px_-5px_rgba(5,255,157,0.3)] group rounded-none ${
+                    isBestValue
+                      ? 'border-primary shadow-[0_0_20px_-10px_rgba(5,255,157,0.3)] scale-105 z-10'
+                      : ''
                   }`}
-                  onClick={() => handlePurchase(pkg)}
-                  disabled={isPending || isConfirming}
                 >
-                  <div className='flex items-center gap-2'>
-                    {isPending || isConfirming ? (
-                      <span className='animate-pulse'>Processing...</span>
-                    ) : (
-                      <>
-                        <Zap className='w-4 h-4 fill-current' />
-                        Purchase
-                      </>
-                    )}
-                  </div>
-                </Button>
-              </CardFooter>
+                  {isBestValue && (
+                    <div className='absolute top-0 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest px-4 py-1 skew-x-[-10deg] shadow-glow-green w-full text-center'>
+                      Best Value
+                    </div>
+                  )}
 
-              {/* Decorative corners */}
-              <div className='absolute top-0 left-0 w-2 h-2 border-t border-l border-primary/50 opacity-0 group-hover:opacity-100 transition-opacity'></div>
-              <div className='absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary/50 opacity-0 group-hover:opacity-100 transition-opacity'></div>
-            </Card>
-          ))}
-        </div>
+                  <CardHeader className='pb-2 pt-10 text-center'>
+                    <CardTitle className='flex flex-col items-center gap-2 text-4xl font-black italic tracking-tighter'>
+                      <Coins className='w-10 h-10 text-primary group-hover:animate-pulse' />
+                      {umpAmount}
+                      <span className='text-sm font-bold text-muted-foreground not-italic tracking-widest'>
+                        UMP
+                      </span>
+                    </CardTitle>
+                  </CardHeader>
+
+                  <CardContent className='py-6 text-center'>
+                    <div className='flex items-baseline justify-center gap-1'>
+                      <span className='text-2xl font-bold text-foreground tracking-tight'>
+                        {pkg.price}
+                      </span>
+                      <span className='text-sm text-muted-foreground font-bold'>
+                        $TRUST
+                      </span>
+                    </div>
+                  </CardContent>
+
+                  <CardFooter>
+                    <Button
+                      className={`w-full h-12 uppercase font-bold tracking-wider rounded-none ${
+                        isBestValue
+                          ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-glow-green'
+                          : 'bg-secondary hover:bg-secondary/80 text-foreground'
+                      }`}
+                      onClick={() => handlePurchase(pkg)}
+                      disabled={isPending || isConfirming}
+                    >
+                      <div className='flex items-center gap-2'>
+                        {isPending || isConfirming ? (
+                          <span className='animate-pulse'>Processing...</span>
+                        ) : (
+                          <>
+                            <Zap className='w-4 h-4 fill-current' />
+                            Purchase
+                          </>
+                        )}
+                      </div>
+                    </Button>
+                  </CardFooter>
+
+                  {/* Decorative corners */}
+                  <div className='absolute top-0 left-0 w-2 h-2 border-t border-l border-primary/50 opacity-0 group-hover:opacity-100 transition-opacity'></div>
+                  <div className='absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary/50 opacity-0 group-hover:opacity-100 transition-opacity'></div>
+                </Card>
+              );
+            })}
+          </div>
+        )}
       </main>
     </div>
   );

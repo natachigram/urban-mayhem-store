@@ -5,12 +5,6 @@
 
 import { createClient } from '@supabase/supabase-js';
 import type { Item, Purchase, UserInventoryItem } from '@/types/database';
-import {
-  mockItems,
-  getMockItemById,
-  getMockItemsByType,
-  getMockFeaturedItems,
-} from './mockData';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -34,24 +28,12 @@ export const supabase = createClient(
   supabaseAnonKey || 'placeholder-key'
 );
 
-// Helper to simulate async delay for mock data
-const mockDelay = () => new Promise((resolve) => setTimeout(resolve, 300));
-
 // ========================================
 // ITEMS API
 // ========================================
 
 export const itemsApi = {
   async getAll(type?: string, limit = 50): Promise<Item[]> {
-    // Use mock data if Supabase not configured
-    if (!isSupabaseConfigured) {
-      await mockDelay();
-      if (type) {
-        return getMockItemsByType(type).slice(0, limit);
-      }
-      return mockItems.slice(0, limit);
-    }
-
     let query = supabase
       .from('items')
       .select('*')
@@ -75,12 +57,6 @@ export const itemsApi = {
   },
 
   async getById(id: string): Promise<Item | null> {
-    // Use mock data if Supabase not configured
-    if (!isSupabaseConfigured) {
-      await mockDelay();
-      return getMockItemById(id) || null;
-    }
-
     const { data, error } = await supabase
       .from('items')
       .select('*')
@@ -97,12 +73,6 @@ export const itemsApi = {
   },
 
   async getFeatured(limit = 6): Promise<Item[]> {
-    // Use mock data if Supabase not configured
-    if (!isSupabaseConfigured) {
-      await mockDelay();
-      return getMockFeaturedItems().slice(0, limit);
-    }
-
     const { data, error } = await supabase
       .from('items')
       .select('*')
@@ -168,11 +138,6 @@ export const purchaseApi = {
   },
 
   async getUserPurchases(userWallet: string): Promise<Purchase[]> {
-    if (!isSupabaseConfigured) {
-      await mockDelay();
-      return [];
-    }
-
     const { data, error } = await supabase
       .from('purchases')
       .select('*, item:items(*)')
@@ -190,11 +155,6 @@ export const purchaseApi = {
 
 export const inventoryApi = {
   async getUserInventory(userWallet: string): Promise<UserInventoryItem[]> {
-    if (!isSupabaseConfigured) {
-      await mockDelay();
-      return [];
-    }
-
     const { data, error } = await supabase
       .from('user_inventory')
       .select('*, item:items(*)')
@@ -206,11 +166,6 @@ export const inventoryApi = {
   },
 
   async getEquippedItems(userWallet: string): Promise<UserInventoryItem[]> {
-    if (!isSupabaseConfigured) {
-      await mockDelay();
-      return [];
-    }
-
     const { data, error } = await supabase
       .from('user_inventory')
       .select('*, item:items(*)')

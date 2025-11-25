@@ -16,84 +16,24 @@ import {
 } from '@/services/intuition';
 import { useToast } from './use-toast';
 
-// Store items data (UMP packages + skins)
-const STORE_ITEMS = [
-  // UMP Packages
-  {
-    id: 'pkg_1',
-    name: 'Starter Pack',
-    description: '500 UMP - Perfect for beginners',
-    image_url: 'https://placehold.co/400x400/0a0a0a/05FF9D?text=500+UMP',
-    type: 'ump' as const,
-  },
-  {
-    id: 'pkg_2',
-    name: 'Pro Pack',
-    description: '1,200 UMP - Best value for active players',
-    image_url: 'https://placehold.co/400x400/0a0a0a/05FF9D?text=1200+UMP',
-    type: 'ump' as const,
-  },
-  {
-    id: 'pkg_3',
-    name: 'Elite Pack',
-    description: '2,500 UMP - For serious competitors',
-    image_url: 'https://placehold.co/400x400/0a0a0a/05FF9D?text=2500+UMP',
-    type: 'ump' as const,
-  },
-  {
-    id: 'pkg_4',
-    name: 'Warlord Pack',
-    description: '6,000 UMP - Maximum firepower',
-    image_url: 'https://placehold.co/400x400/0a0a0a/05FF9D?text=6000+UMP',
-    type: 'ump' as const,
-  },
-  // Skins
-  {
-    id: 'skin_1',
-    name: 'Neon Spectre',
-    description: 'Elite stealth suit with active camouflage capabilities',
-    image_url: 'https://placehold.co/400x500/0a0a0a/05FF9D?text=Neon+Spectre',
-    type: 'skin' as const,
-  },
-  {
-    id: 'skin_2',
-    name: 'Cyber Punk',
-    description: 'Street-ready combat gear with integrated neural link',
-    image_url: 'https://placehold.co/400x500/0a0a0a/3BA4FF?text=Cyber+Punk',
-    type: 'skin' as const,
-  },
-  {
-    id: 'skin_3',
-    name: 'Urban Ranger',
-    description: 'Standard issue urban camouflage for city operations',
-    image_url: 'https://placehold.co/400x500/0a0a0a/989898?text=Urban+Ranger',
-    type: 'skin' as const,
-  },
-  {
-    id: 'skin_4',
-    name: 'Void Walker',
-    description: 'Experimental suit utilizing void energy for movement',
-    image_url: 'https://placehold.co/400x500/0a0a0a/FFD700?text=Void+Walker',
-    type: 'skin' as const,
-  },
-  {
-    id: 'skin_5',
-    name: 'Toxic Hazard',
-    description: 'Hazmat combat suit designed for toxic environments',
-    image_url: 'https://placehold.co/400x500/0a0a0a/FFA500?text=Toxic+Hazard',
-    type: 'skin' as const,
-  },
-  {
-    id: 'skin_6',
-    name: 'Night Owl',
-    description: 'Specialized gear for night operations',
-    image_url: 'https://placehold.co/400x500/0a0a0a/989898?text=Night+Owl',
-    type: 'skin' as const,
-  },
-];
+/**
+ * Fetch item data from Supabase by UUID
+ */
+const getStoreItemData = async (itemId: string) => {
+  try {
+    const { supabase } = await import('@/services/supabase');
+    const { data, error } = await supabase
+      .from('items')
+      .select('*')
+      .eq('id', itemId)
+      .single();
 
-const getStoreItemData = (itemId: string) => {
-  return STORE_ITEMS.find((item) => item.id === itemId);
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Failed to fetch item:', error);
+    return null;
+  }
 };
 
 export const useAttestation = () => {
@@ -141,8 +81,8 @@ export const useAttestation = () => {
             description: 'Creating attestation infrastructure for this item',
           });
 
-          // Get item data from store catalog
-          const itemData = getStoreItemData(params.itemId);
+          // Get item data from database
+          const itemData = await getStoreItemData(params.itemId);
 
           if (!itemData) {
             throw new Error('Item not found in store catalog');

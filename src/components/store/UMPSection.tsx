@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -20,37 +20,28 @@ import {
 import { useAccount } from 'wagmi';
 import { toast } from 'sonner';
 import { usePayment } from '@/hooks/usePayment';
-
-interface UMPPackage {
-  id: string;
-  amount: number;
-  priceTrust: number;
-  name: string;
-  isBestValue?: boolean;
-}
-
-const PACKAGES: UMPPackage[] = [
-  { id: 'pkg_1', amount: 500, priceTrust: 0.05, name: 'Starter Pack' },
-  {
-    id: 'pkg_2',
-    amount: 1200,
-    priceTrust: 0.1,
-    name: 'Pro Pack',
-    isBestValue: true,
-  },
-  { id: 'pkg_3', amount: 2500, priceTrust: 0.2, name: 'Elite Pack' },
-  { id: 'pkg_4', amount: 6000, priceTrust: 0.3, name: 'Warlord Pack' },
-];
+import { getItemsByType, type Item } from '@/services/items';
 
 export const UMPSection = () => {
-  const [selectedPackage, setSelectedPackage] = useState<UMPPackage | null>(
-    null
-  );
+  const [selectedPackage, setSelectedPackage] = useState<Item | null>(null);
   const [playerId, setPlayerId] = useState('');
+  const [packages, setPackages] = useState<Item[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { isConnected } = useAccount();
   const { pay, isProcessing } = usePayment();
 
-  const handleBuyClick = (pkg: UMPPackage) => {
+  useEffect(() => {
+    loadPackages();
+  }, []);
+
+  const loadPackages = async () => {
+    setIsLoading(true);
+    const data = await getItemsByType('ump');
+    setPackages(data);
+    setIsLoading(false);
+  };
+
+  const handleBuyClick = (pkg: Item) => {
     if (!isConnected) {
       toast.error('Please connect your wallet first');
       return;
@@ -69,7 +60,7 @@ export const UMPSection = () => {
     const result = await pay(
       selectedPackage.id,
       playerId,
-      selectedPackage.priceTrust,
+      selectedPackage.price,
       1
     );
 
@@ -91,62 +82,74 @@ export const UMPSection = () => {
         </div>
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-        {PACKAGES.map((pkg) => (
-          <Card
-            key={pkg.id}
-            className={`relative border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-300 group overflow-hidden ${
-              pkg.isBestValue ? 'border-primary/50 shadow-glow-green' : ''
-            }`}
-          >
-            {pkg.isBestValue && (
-              <div className='absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider z-10'>
-                Best Value
-              </div>
-            )}
+      {isLoading ? (
+        <div className='flex items-center justify-center py-20'>
+          <Loader2 className='h-8 w-8 animate-spin text-primary' />
+        </div>
+      ) : packages.length === 0 ? (
+        <div className='text-center py-20'>
+          <p className='text-muted-foreground text-lg'>No packages available</p>
+        </div>
+      ) : (
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+          {packages.map((pkg) => (
+            <Card
+              key={pkg.id}
+              className={`relative border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-300 group overflow-hidden ${
+                pkg.metadata?.best_value
+                  ? 'border-primary/50 shadow-glow-green'
+                  : ''
+              }`}
+            >
+              {pkg.metadata?.best_value && (
+                <div className='absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider z-10'>
+                  Best Value
+                </div>
+              )}
 
-            <CardHeader className='text-center pb-2'>
-              <CardTitle className='text-lg font-bold uppercase tracking-wider text-muted-foreground group-hover:text-foreground transition-colors'>
-                {pkg.name}
-              </CardTitle>
-            </CardHeader>
+              <CardHeader className='text-center pb-2'>
+                <CardTitle className='text-lg font-bold uppercase tracking-wider text-muted-foreground group-hover:text-foreground transition-colors'>
+                  {pkg.name}
+                </CardTitle>
+              </CardHeader>
 
-            <CardContent className='text-center space-y-4'>
-              <div className='flex items-center justify-center gap-2 text-4xl font-black text-foreground italic tracking-tighter'>
-                <Coins className='h-8 w-8 text-primary' />
-                {pkg.amount.toLocaleString()}
-              </div>
+              <CardContent className='text-center space-y-4'>
+                <div className='flex items-center justify-center gap-2 text-4xl font-black text-foreground italic tracking-tighter'>
+                  <Coins className='h-8 w-8 text-primary' />
+                  {pkg.metadata?.ump_amount?.toLocaleString() || 0}
+                </div>
 
-              <div className='h-px w-full bg-gradient-to-r from-transparent via-border to-transparent' />
+                <div className='h-px w-full bg-gradient-to-r from-transparent via-border to-transparent' />
 
-              <div className='flex items-center justify-center gap-2 text-xl font-bold text-electric-blue'>
-                <Zap className='h-5 w-5' />
-                {pkg.priceTrust} $TRUST
-              </div>
-            </CardContent>
+                <div className='flex items-center justify-center gap-2 text-xl font-bold text-electric-blue'>
+                  <Zap className='h-5 w-5' />
+                  {pkg.price} $TRUST
+                </div>
+              </CardContent>
 
-            <CardFooter>
-              <Button
-                className='w-full uppercase font-bold tracking-wider bg-secondary hover:bg-primary hover:text-primary-foreground transition-all duration-300 border border-primary/20 disabled:opacity-50 disabled:cursor-not-allowed'
-                onClick={() => handleBuyClick(pkg)}
-                disabled={!isConnected || isProcessing}
-              >
-                {isProcessing ? (
-                  <div className='flex items-center gap-2'>
-                    <Loader2 className='h-4 w-4 animate-spin' />
-                    Processing...
-                  </div>
-                ) : (
-                  'Purchase'
-                )}
-              </Button>
-            </CardFooter>
+              <CardFooter>
+                <Button
+                  className='w-full uppercase font-bold tracking-wider bg-secondary hover:bg-primary hover:text-primary-foreground transition-all duration-300 border border-primary/20 disabled:opacity-50 disabled:cursor-not-allowed'
+                  onClick={() => handleBuyClick(pkg)}
+                  disabled={!isConnected || isProcessing}
+                >
+                  {isProcessing ? (
+                    <div className='flex items-center gap-2'>
+                      <Loader2 className='h-4 w-4 animate-spin' />
+                      Processing...
+                    </div>
+                  ) : (
+                    'Purchase'
+                  )}
+                </Button>
+              </CardFooter>
 
-            {/* Hover Effect */}
-            <div className='absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none' />
-          </Card>
-        ))}
-      </div>
+              {/* Hover Effect */}
+              <div className='absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none' />
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Purchase Modal */}
       <Dialog
@@ -201,7 +204,7 @@ export const UMPSection = () => {
                   </span>
                   <div className='flex items-center gap-2 text-xl font-bold text-electric-blue'>
                     <Zap className='h-5 w-5' />
-                    {selectedPackage.priceTrust} $TRUST
+                    {selectedPackage.price} $TRUST
                   </div>
                 </div>
 
@@ -213,7 +216,9 @@ export const UMPSection = () => {
                   </span>
                   <div className='flex items-center gap-2 text-xl font-bold text-primary'>
                     <Coins className='h-5 w-5' />
-                    {selectedPackage.amount.toLocaleString()} UMP
+                    {selectedPackage.metadata?.ump_amount?.toLocaleString() ||
+                      0}{' '}
+                    UMP
                   </div>
                 </div>
               </div>
