@@ -18,6 +18,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 interface SocialProofProps {
   itemId: string;
   compact?: boolean;
+  refreshKey?: number; // Increment to force refresh
 }
 
 interface SocialMetrics {
@@ -29,24 +30,44 @@ interface SocialMetrics {
   trust_score: number;
 }
 
-export const SocialProof = ({ itemId, compact = false }: SocialProofProps) => {
+export const SocialProof = ({ itemId, compact = false, refreshKey = 0 }: SocialProofProps) => {
   const [metrics, setMetrics] = useState<SocialMetrics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     loadMetrics();
-  }, [itemId]);
+  }, [itemId, refreshKey]);
 
   const loadMetrics = async () => {
     try {
       setIsLoading(true);
 
-      // Get atom ID for this item
+      // Get item identifier first (atoms use identifier, not UUID)
+      const { data: item } = await supabase
+        .from('items')
+        .select('identifier')
+        .eq('id', itemId)
+        .single();
+
+      if (!item?.identifier) {
+        setMetrics({
+          total_attestations: 0,
+          unique_raters: 0,
+          positive_count: 0,
+          negative_count: 0,
+          comment_count: 0,
+          trust_score: 0,
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Get atom ID for this item using identifier
       const { data: atom } = await supabase
         .from('atoms')
         .select('atom_id')
         .eq('entity_type', 'item')
-        .eq('entity_id', itemId)
+        .eq('entity_id', item.identifier)
         .single();
 
       if (!atom) {

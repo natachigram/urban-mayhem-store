@@ -16,12 +16,13 @@ import {
   User,
   Star,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 import { usePayment } from '@/hooks/usePayment';
 import { TrustScoreBadge } from './TrustScoreBadge';
 import { RateItemModal } from './RateItemModal';
+import { supabase } from '@/services/supabase';
 
 interface Skin {
   id: string;
@@ -40,6 +41,7 @@ interface SkinDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   onPurchase: (skinId: string) => Promise<void>;
+  onAttestationSuccess?: () => void;
 }
 
 export const SkinDetailModal = ({
@@ -47,13 +49,74 @@ export const SkinDetailModal = ({
   isOpen,
   onClose,
   onPurchase,
+  onAttestationSuccess,
 }: SkinDetailModalProps) => {
   const [playerId, setPlayerId] = useState('');
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [rateModalOpen, setRateModalOpen] = useState(false);
+  const [attestationCount, setAttestationCount] = useState(0);
+  const [trustScore, setTrustScore] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
   const { isConnected } = useAccount();
   const { pay, isProcessing: isPurchasing } = usePayment();
+
+  // Fetch real attestation data
+  useEffect(() => {
+    if (!skin?.id) return;
+
+    const fetchAttestationData = async () => {
+      try {
+        // Get item identifier first
+        const { data: item } = await supabase
+          .from('items')
+          .select('identifier')
+          .eq('id', skin.id)
+          .single();
+
+        if (!item?.identifier) {
+          setAttestationCount(0);
+          setTrustScore(0);
+          return;
+        }
+
+        // Get atom ID using identifier
+        const { data: atom } = await supabase
+          .from('atoms')
+          .select('atom_id')
+          .eq('entity_type', 'item')
+          .eq('entity_id', item.identifier)
+          .single();
+
+        if (!atom) {
+          setAttestationCount(0);
+          setTrustScore(0);
+          return;
+        }
+
+        // Get attestation count
+        const { data: metrics } = await supabase
+          .from('item_social_metrics')
+          .select('unique_raters')
+          .eq('atom_id', atom.atom_id)
+          .single();
+
+        // Get trust score
+        const { data: trustData } = await supabase
+          .from('trust_scores')
+          .select('score')
+          .eq('atom_id', atom.atom_id)
+          .single();
+
+        setAttestationCount(metrics?.unique_raters || 0);
+        setTrustScore(trustData?.score || 0);
+      } catch (error) {
+        console.error('Failed to fetch attestation data:', error);
+      }
+    };
+
+    fetchAttestationData();
+  }, [skin?.id, refreshKey]);
 
   if (!skin) return null;
 
@@ -159,19 +222,17 @@ export const SkinDetailModal = ({
                 >
                   {skin.rarity}
                 </Badge>
-                {skin.trustScore && (
+                {trustScore > 0 && (
                   <div className='flex items-center gap-1.5 bg-secondary/30 px-2 py-1 rounded-sm border border-border/50'>
                     <ShieldCheck
-                      className={`h-3.5 w-3.5 ${getTrustColor(
-                        skin.trustScore
-                      )}`}
+                      className={`h-3.5 w-3.5 ${getTrustColor(trustScore)}`}
                     />
                     <span
                       className={`text-xs font-black ${getTrustColor(
-                        skin.trustScore
+                        trustScore
                       )}`}
                     >
-                      {skin.trustScore}% TRUST
+                      {trustScore.toFixed(0)}% TRUST
                     </span>
                   </div>
                 )}
@@ -193,9 +254,7 @@ export const SkinDetailModal = ({
                     Community Rating
                   </div>
                   <div className='text-lg font-black text-foreground flex items-center gap-1'>
-                    {skin.trustScore
-                      ? (skin.trustScore / 10).toFixed(1)
-                      : '0.0'}
+                    {trustScore > 0 ? (trustScore / 10).toFixed(1) : '0.0'}
                     <span className='text-xs text-muted-foreground font-medium'>
                       / 10
                     </span>
@@ -207,7 +266,7 @@ export const SkinDetailModal = ({
                   </div>
                   <div className='text-lg font-black text-foreground flex items-center gap-1'>
                     <Users className='h-4 w-4 text-muted-foreground' />
-                    {skin.attestations?.toLocaleString() || 0}
+                    {attestationCount}
                   </div>
                 </div>
               </div>
@@ -308,6 +367,8 @@ export const SkinDetailModal = ({
         itemName={skin.name}
         onSuccess={() => {
           toast.success('Thank you for your rating!');
+          setRefreshKey((prev) => prev + 1); // Refresh attestation data
+          onAttestationSuccess?.();
         }}
       />
     </Dialog>

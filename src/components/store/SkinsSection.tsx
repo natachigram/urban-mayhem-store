@@ -14,7 +14,6 @@ import {
   Search,
   Filter,
   ShieldCheck,
-  Users,
   Loader2,
 } from 'lucide-react';
 import { SkinDetailModal } from './SkinDetailModal';
@@ -28,6 +27,8 @@ export const SkinsSection = () => {
   const [selectedSkin, setSelectedSkin] = useState<Item | null>(null);
   const [skins, setSkins] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     loadSkins();
@@ -171,7 +172,7 @@ export const SkinsSection = () => {
               {/* Real-time Trust Score from Attestations */}
               <div className='absolute top-2 right-2 z-10'>
                 <div className='bg-background/90 backdrop-blur-sm px-2 py-1 rounded-sm border border-border/50'>
-                  <SocialProof itemId={skin.id} compact />
+                  <SocialProof itemId={skin.id} compact refreshKey={refreshKey} />
                 </div>
               </div>
 
@@ -195,13 +196,6 @@ export const SkinsSection = () => {
                     <Coins className='h-3.5 w-3.5' />
                     {skin.price.toLocaleString()}
                   </div>
-
-                  <div className='flex items-center gap-1 text-[10px] text-muted-foreground font-medium'>
-                    <Users className='h-3 w-3' />
-                    {skin.purchase_count > 1000
-                      ? `${(skin.purchase_count / 1000).toFixed(1)}k`
-                      : skin.purchase_count}
-                  </div>
                 </div>
               </CardContent>
 
@@ -217,6 +211,7 @@ export const SkinsSection = () => {
         isOpen={!!selectedSkin}
         onClose={() => setSelectedSkin(null)}
         onPurchase={handlePurchase}
+        onAttestationSuccess={() => setRefreshKey(prev => prev + 1)}
       />
     </section>
   );

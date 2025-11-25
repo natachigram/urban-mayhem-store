@@ -24,7 +24,17 @@ export const TrustScoreBadge = ({
   useEffect(() => {
     const fetchTrustScore = async () => {
       try {
-        const itemAtom = await getCachedAtom('item', itemId);
+        // First try to get item data to find identifier
+        const { supabase } = await import('@/services/supabase');
+        const { data: item } = await supabase
+          .from('items')
+          .select('identifier')
+          .eq('id', itemId)
+          .single();
+
+        const entityId = item?.identifier || itemId;
+        
+        const itemAtom = await getCachedAtom('item', entityId);
         if (itemAtom) {
           const score = await calculateTrustScore(itemAtom.atom_id);
           setTrustScore(score);
