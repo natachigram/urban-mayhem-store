@@ -1,7 +1,7 @@
 {
-    "buildCommand": "echo 'Using pre-built assets'",
+    "buildCommand": "npm run build",
     "outputDirectory": "dist",
-    "installCommand": "echo 'Skipping install'",
+    "installCommand": "npm install --legacy-peer-deps",
     "framework": null,
     "rewrites": [
         {
