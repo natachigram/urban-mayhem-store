@@ -30,7 +30,11 @@ interface SocialMetrics {
   trust_score: number;
 }
 
-export const SocialProof = ({ itemId, compact = false, refreshKey = 0 }: SocialProofProps) => {
+export const SocialProof = ({
+  itemId,
+  compact = false,
+  refreshKey = 0,
+}: SocialProofProps) => {
   const [metrics, setMetrics] = useState<SocialMetrics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 

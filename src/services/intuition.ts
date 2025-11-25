@@ -326,7 +326,8 @@ export const createAttestation = async (
       creator_wallet: eventData.creator as string,
       transaction_hash: tripleData.transactionHash,
       status: 'active',
-      comment: params.comment || null, // Store comment if provided
+      comment: params.comment || null,
+      metadata: params.comment ? { comment: params.comment } : {},
     });
 
     if (insertError) {

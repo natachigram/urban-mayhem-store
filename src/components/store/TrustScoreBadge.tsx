@@ -33,7 +33,7 @@ export const TrustScoreBadge = ({
           .single();
 
         const entityId = item?.identifier || itemId;
-        
+
         const itemAtom = await getCachedAtom('item', entityId);
         if (itemAtom) {
           const score = await calculateTrustScore(itemAtom.atom_id);

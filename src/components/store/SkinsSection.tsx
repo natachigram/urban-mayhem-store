@@ -9,13 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Coins,
-  Search,
-  Filter,
-  ShieldCheck,
-  Loader2,
-} from 'lucide-react';
+import { Coins, Search, Filter, ShieldCheck, Loader2 } from 'lucide-react';
 import { SkinDetailModal } from './SkinDetailModal';
 import { SocialProof } from './SocialProof';
 import { getItemsByType, type Item } from '@/services/items';
@@ -171,7 +165,11 @@ export const SkinsSection = () => {
               {/* Real-time Trust Score from Attestations */}
               <div className='absolute top-2 right-2 z-10'>
                 <div className='bg-background/90 backdrop-blur-sm px-2 py-1 rounded-sm border border-border/50'>
-                  <SocialProof itemId={skin.id} compact refreshKey={refreshKey} />
+                  <SocialProof
+                    itemId={skin.id}
+                    compact
+                    refreshKey={refreshKey}
+                  />
                 </div>
               </div>
 
@@ -210,7 +208,7 @@ export const SkinsSection = () => {
         isOpen={!!selectedSkin}
         onClose={() => setSelectedSkin(null)}
         onPurchase={handlePurchase}
-        onAttestationSuccess={() => setRefreshKey(prev => prev + 1)}
+        onAttestationSuccess={() => setRefreshKey((prev) => prev + 1)}
       />
     </section>
   );

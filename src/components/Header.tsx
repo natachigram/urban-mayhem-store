@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useBalance } from 'wagmi';
 import { Coins, Zap, Menu, X } from 'lucide-react';
@@ -12,6 +12,7 @@ export const Header = () => {
   const { address, isConnected, chain } = useAccount();
   const [umpBalance, setUmpBalance] = useState<number>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   // Fetch real UMP Balance from user_inventory
   useEffect(() => {
@@ -155,21 +156,33 @@ export const Header = () => {
           <nav className='hidden md:flex gap-6'>
             <Link
               to='/'
-              className='text-sm font-bold text-foreground hover:text-primary transition-colors uppercase tracking-wider'
+              className={`text-sm font-bold hover:text-primary transition-colors uppercase tracking-wider ${
+                location.pathname === '/'
+                  ? 'text-primary'
+                  : 'text-muted-foreground'
+              }`}
             >
               Store
             </Link>
             <Link
-              to='/history'
-              className='text-sm font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-wider'
+              to='/activity'
+              className={`text-sm font-bold hover:text-primary transition-colors uppercase tracking-wider ${
+                location.pathname === '/activity'
+                  ? 'text-primary'
+                  : 'text-muted-foreground'
+              }`}
             >
-              History
+              Activity
             </Link>
             <Link
-              to='/attestations'
-              className='text-sm font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-wider'
+              to='/history'
+              className={`text-sm font-bold hover:text-primary transition-colors uppercase tracking-wider ${
+                location.pathname === '/history'
+                  ? 'text-primary'
+                  : 'text-muted-foreground'
+              }`}
             >
-              Attestations
+              History
             </Link>
           </nav>
 
@@ -188,23 +201,35 @@ export const Header = () => {
                 <Link
                   to='/'
                   onClick={() => setMobileMenuOpen(false)}
-                  className='text-lg font-bold text-foreground hover:text-primary transition-colors uppercase tracking-wider'
+                  className={`text-lg font-bold hover:text-primary transition-colors uppercase tracking-wider ${
+                    location.pathname === '/'
+                      ? 'text-primary'
+                      : 'text-muted-foreground'
+                  }`}
                 >
                   Store
                 </Link>
                 <Link
-                  to='/history'
+                  to='/activity'
                   onClick={() => setMobileMenuOpen(false)}
-                  className='text-lg font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-wider'
+                  className={`text-lg font-bold hover:text-primary transition-colors uppercase tracking-wider ${
+                    location.pathname === '/activity'
+                      ? 'text-primary'
+                      : 'text-muted-foreground'
+                  }`}
                 >
-                  History
+                  Activity
                 </Link>
                 <Link
-                  to='/attestations'
+                  to='/history'
                   onClick={() => setMobileMenuOpen(false)}
-                  className='text-lg font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-wider'
+                  className={`text-lg font-bold hover:text-primary transition-colors uppercase tracking-wider ${
+                    location.pathname === '/history'
+                      ? 'text-primary'
+                      : 'text-muted-foreground'
+                  }`}
                 >
-                  Attestations
+                  History
                 </Link>
               </nav>
             </SheetContent>

@@ -1,6 +1,7 @@
 import { Header } from '@/components/Header';
 import { HeroSection } from '@/components/store/HeroSection';
 import { UMPSection } from '@/components/store/UMPSection';
+import { TopRatedSection } from '@/components/store/TopRatedSection';
 import { SkinsSection } from '@/components/store/SkinsSection';
 import {
   Lock,
@@ -46,6 +47,9 @@ const Store = () => {
         <div className='container space-y-24'>
           {/* Buy UMP Section */}
           <UMPSection />
+
+          {/* Top Rated Items - Community Favorites */}
+          <TopRatedSection />
 
           {/* Character Skins Shop */}
           <SkinsSection />
