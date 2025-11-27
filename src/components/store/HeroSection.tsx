@@ -1,4 +1,5 @@
-import { Zap } from 'lucide-react';
+import { Zap, Download, Apple } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export const HeroSection = () => {
   return (
@@ -30,6 +31,29 @@ export const HeroSection = () => {
           <p className='max-w-xl text-lg text-muted-foreground font-medium border-l-2 border-primary/50 pl-6 leading-relaxed'>
             *Promotion valid for selected products only.
           </p>
+
+          <div className='flex flex-wrap items-center gap-4 pt-4'>
+            <Button
+              asChild
+              size='lg'
+              className='bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase tracking-wider shadow-lg shadow-primary/50'
+            >
+              <a
+                href='https://drive.google.com/drive/folders/1K3p6CdGk-ZAikJnFPEO1767jan9kmr0s?usp=share_link'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='flex items-center gap-2'
+              >
+                <Download className='h-5 w-5' />
+                Download Game (Android)
+              </a>
+            </Button>
+
+            <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+              <Apple className='h-4 w-4' />
+              <span className='font-medium'>iOS Coming Soon</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
